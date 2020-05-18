@@ -24,8 +24,9 @@ const p = markdownIt.parse(`
 more things
 `, {});
 
-const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>({ children: p, type: "top-level" },
-  t => t.type, t => ([]))
+const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
+  { children: p, type: "top-level" },
+  t => t.type, t => (t.children || []))
 
 console.log(printedTree);
 

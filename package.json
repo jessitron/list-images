@@ -18,7 +18,6 @@
   "author": "jessitron",
   "license": "ISC",
   "dependencies": {
-    "@types/remarkable": "^1.7.4",
     "markdown-it": "^10.0.0",
     "remarkable": "^2.0.0",
     "stringify-tree": "^1.1.1"
