@@ -41,5 +41,5 @@ function allImageTokens(input: typeof p): typeof p {
 }
 const images = allImageTokens(p);
 
-console.log("Image tokens: " + images.map(i => i.markup).join("\n"))
+console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
 
