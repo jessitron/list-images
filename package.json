@@ -5,11 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "build": "tsc"
+    "build": "tsc",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jessitron/list-images.git"
+  },
+  "bin": {
+    "list-images": "index.js"
   },
   "author": "jessitron",
   "license": "ISC",
@@ -17,6 +21,8 @@
     "markdown-it": "^10.0.0"
   },
   "devDependencies": {
+    "@types/markdown-it": "^10.0.1",
+    "@types/node": "^14.0.1",
     "typescript": "^3.9.2"
   }
 }
