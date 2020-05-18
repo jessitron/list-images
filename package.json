@@ -1,0 +1,22 @@
+{
+  "name": "list-images",
+  "version": "1.0.0",
+  "description": "List image links found in Markdown",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jessitron/list-images.git"
+  },
+  "author": "jessitron",
+  "license": "ISC",
+  "dependencies": {
+    "markdown-it": "^10.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.2"
+  }
+}
