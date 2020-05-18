@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha",
     "build": "tsc",
-    "start": "node index.js"
+    "start": "node index.js ./test/stuff.md"
   },
   "repository": {
     "type": "git",
@@ -18,11 +18,14 @@
   "author": "jessitron",
   "license": "ISC",
   "dependencies": {
-    "markdown-it": "^10.0.0"
+    "@types/remarkable": "^1.7.4",
+    "markdown-it": "^10.0.0",
+    "remarkable": "^2.0.0",
+    "stringify-tree": "^1.1.1"
   },
   "devDependencies": {
     "@types/markdown-it": "^10.0.1",
-    "@types/node": "^14.0.1",
+    "@types/node": "^12.12.39",
     "typescript": "^3.9.2"
   }
 }
