@@ -18,15 +18,12 @@ import { promisify } from "util";
 
 const markdownIt = new Remarkable();
 
-const stringContent = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
+const stringContent: Promise<string> = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
+
 stringContent.then(content => {
   const p = markdownIt.parse(content, {});
 
-  const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
-    { children: p, type: "top-level" },
-    t => t.type, t => (t.children || []))
-
-  console.log(printedTree);
+  printTree(p);
 
   // not tail-recursive
   function allImageTokens(input: typeof p): typeof p {
@@ -41,3 +38,11 @@ stringContent.then(content => {
 
   console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
 });
+
+function printTree(p: any) {
+  const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
+    { children: p, type: "top-level" },
+    t => t.type, t => (t.children || []))
+
+  console.log(printedTree);
+}
