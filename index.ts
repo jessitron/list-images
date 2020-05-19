@@ -41,10 +41,12 @@ function imagesFromFile(path: string): Promise<Image[]> {
   });
 };
 
-imagesFromFile(files[0]).catch(err => {
+const output = Promise.all(files.map(f => imagesFromFile(f).catch(err => {
   console.error(err);
   return ([] as Image[]);
-});
+})));
+
+output.then(all => all.flat().map(a => JSON.stringify(a)).forEach(a => console.log(a)));
 
 type Tree = { type: string, children: Tree[] | null }
 
