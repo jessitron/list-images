@@ -18,21 +18,28 @@ import { promisify } from "util";
 
 const markdownIt = new Remarkable();
 
-const stringContent: Promise<string> = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
+type Image = { alt: string, title: string, src: string, markdownFile: string }
 
-stringContent.then(content => {
-  const p = markdownIt.parse(content, {});
 
-  printTree(p);
+function imagesFromFile(path: string): Promise<Image[]> {
+  const stringContent: Promise<string> = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
 
-  // not tail-recursive
+  return stringContent.then(content => {
+    const p = markdownIt.parse(content, {});
 
-  const images = allImageTokens(p);
+    printTree(p);
 
-  console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
-});
+    const images = allImageTokens(p);
+
+    console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
+    return images as any;
+  });
+};
+imagesFromFile(files[0]);
 
 type Tree = { type: string, children: Tree[] | null }
+
+// not tail-recursive
 function allImageTokens(input: Tree[]): Tree[] {
   if (!input || input.length === 0) {
     return [];
