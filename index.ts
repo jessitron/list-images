@@ -14,11 +14,12 @@ console.log("The files are: " + files.join(" "))
 import { Remarkable } from "remarkable";
 import { stringifyTree } from "stringify-tree";
 import * as fs from "fs";
+import { promisify } from "util";
 
 const markdownIt = new Remarkable();
 
-const stringContent = fs.readFileSync(files[0], { encoding: "UTF-8" });
-Promise.resolve(stringContent).then(content => {
+const stringContent = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
+stringContent.then(content => {
   const p = markdownIt.parse(content, {});
 
   const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
