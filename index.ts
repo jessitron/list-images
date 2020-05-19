@@ -26,12 +26,9 @@ function imagesFromFile(path: string): Promise<Image[]> {
 
   return stringContent.then(content => {
     const p = markdownIt.parse(content, {});
-
-    printTree(p);
-
+    // printTree(p);
     const images = allImageTokens(p);
-
-    console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
+    //console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
     return images.map((i: any) => ({
       markdownFile: path,
       src: i.src as string,
