@@ -26,7 +26,8 @@ stringContent.then(content => {
   printTree(p);
 
   // not tail-recursive
-  function allImageTokens(input: typeof p): typeof p {
+  type Tree = { type: string, children: Tree[] | null }
+  function allImageTokens(input: Tree[]): Tree[] {
     if (!input || input.length === 0) {
       return [];
     };
