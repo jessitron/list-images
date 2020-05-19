@@ -23,24 +23,25 @@ const stringContent = `
 
 more things
 `;
-const p = markdownIt.parse(stringContent, {});
+Promise.resolve(stringContent).then(content => {
+  const p = markdownIt.parse(content, {});
 
-const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
-  { children: p, type: "top-level" },
-  t => t.type, t => (t.children || []))
+  const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
+    { children: p, type: "top-level" },
+    t => t.type, t => (t.children || []))
 
-console.log(printedTree);
+  console.log(printedTree);
 
-// not tail-recursive
-function allImageTokens(input: typeof p): typeof p {
-  if (!input || input.length === 0) {
-    return [];
-  };
-  const images = input.filter(t => t.type === "image");
-  const rest = input.filter(t => t.type !== "image").flatMap(t => t.children || []);
-  return images.concat(allImageTokens(rest));
-}
-const images = allImageTokens(p);
+  // not tail-recursive
+  function allImageTokens(input: typeof p): typeof p {
+    if (!input || input.length === 0) {
+      return [];
+    };
+    const images = input.filter(t => t.type === "image");
+    const rest = input.filter(t => t.type !== "image").flatMap(t => t.children || []);
+    return images.concat(allImageTokens(rest));
+  }
+  const images = allImageTokens(p);
 
-console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
-
+  console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
+});
