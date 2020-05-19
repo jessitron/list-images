@@ -1,5 +1,5 @@
-# stuff and things
+# stuff and boogers
 
-![image](location/img.jpg)
+![yo yo](location/yo.jpg)
 
-more things
+more things in your nose
