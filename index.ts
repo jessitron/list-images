@@ -35,7 +35,11 @@ function imagesFromFile(path: string): Promise<Image[]> {
     return images as any;
   });
 };
-imagesFromFile(files[0]);
+
+imagesFromFile(files[0]).catch(err => {
+  console.error(err);
+  return ([] as Image[]);
+});
 
 type Tree = { type: string, children: Tree[] | null }
 
