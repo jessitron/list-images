@@ -16,13 +16,14 @@ import { stringifyTree } from "stringify-tree";
 
 const markdownIt = new Remarkable();
 
-const p = markdownIt.parse(`
+const stringContent = `
 # stuff and things
 
 ![image](location/img.jpg)
 
 more things
-`, {});
+`;
+const p = markdownIt.parse(stringContent, {});
 
 const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
   { children: p, type: "top-level" },

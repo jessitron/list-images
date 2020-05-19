@@ -19,3 +19,4 @@ FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:0-12
 #    && rm -rf /var/lib/apt/lists/*
 # ENV DEBIAN_FRONTEND=dialog
 
+RUN npm install -g ts-node
