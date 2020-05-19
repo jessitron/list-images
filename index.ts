@@ -26,19 +26,21 @@ stringContent.then(content => {
   printTree(p);
 
   // not tail-recursive
-  type Tree = { type: string, children: Tree[] | null }
-  function allImageTokens(input: Tree[]): Tree[] {
-    if (!input || input.length === 0) {
-      return [];
-    };
-    const images = input.filter(t => t.type === "image");
-    const rest = input.filter(t => t.type !== "image").flatMap(t => t.children || []);
-    return images.concat(allImageTokens(rest));
-  }
+
   const images = allImageTokens(p);
 
   console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
 });
+
+type Tree = { type: string, children: Tree[] | null }
+function allImageTokens(input: Tree[]): Tree[] {
+  if (!input || input.length === 0) {
+    return [];
+  };
+  const images = input.filter(t => t.type === "image");
+  const rest = input.filter(t => t.type !== "image").flatMap(t => t.children || []);
+  return images.concat(allImageTokens(rest));
+}
 
 function printTree(p: any) {
   const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
