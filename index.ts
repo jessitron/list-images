@@ -32,7 +32,12 @@ function imagesFromFile(path: string): Promise<Image[]> {
     const images = allImageTokens(p);
 
     console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
-    return images as any;
+    return images.map((i: any) => ({
+      markdownFile: path,
+      src: i.src as string,
+      alt: i.alt as string,
+      title: i.title as string,
+    }));
   });
 };
 
