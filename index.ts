@@ -13,16 +13,11 @@ console.log("The files are: " + files.join(" "))
 
 import { Remarkable } from "remarkable";
 import { stringifyTree } from "stringify-tree";
+import * as fs from "fs";
 
 const markdownIt = new Remarkable();
 
-const stringContent = `
-# stuff and things
-
-![image](location/img.jpg)
-
-more things
-`;
+const stringContent = fs.readFileSync(files[0], { encoding: "UTF-8" });
 Promise.resolve(stringContent).then(content => {
   const p = markdownIt.parse(content, {});
 
