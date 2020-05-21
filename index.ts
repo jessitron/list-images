@@ -47,7 +47,7 @@ if (files.length > 1) {
     return ([] as Image[]);
   });
 
-  output.then(all => all.flat().map(a => JSON.stringify(a)).forEach(a => console.log(a)));
+  output.then(all => all.map(a => JSON.stringify(a)).forEach(a => console.log(a)));
 
   type Tree = { type: string, children: Tree[] | null }
 
