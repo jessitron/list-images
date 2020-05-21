@@ -18,11 +18,13 @@ if (files.length === 0) {
 if (files.length > 1) {
   const stuff = Promise.all(files.map(f =>
     promisify(fork)("index.js", [path.resolve(f)], {})));
-  console.error("ok!")
+  console.error("ok!");
   stuff.then(ok => console.error("yeah"), err => { console.error(err) });
 } else {
 
-  console.log("The file is: " + files.join(" "))
+  const filepath = files[0];
+
+  console.log("The file is: " + filepath);
 
 
   const markdownIt = new Remarkable();
@@ -31,7 +33,7 @@ if (files.length > 1) {
 
 
   function imagesFromFile(path: string): Promise<Image[]> {
-    const stringContent: Promise<string> = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
+    const stringContent: Promise<string> = promisify(fs.readFile)(filepath, { encoding: "UTF-8" });
 
     return stringContent.then(content => {
       const p = markdownIt.parse(content, {});
@@ -39,7 +41,7 @@ if (files.length > 1) {
       const images = allImageTokens(p);
       //console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
       return images.map((i: any) => ({
-        markdownFile: path,
+        markdownFile: filepath,
         src: i.src as string,
         alt: i.alt as string,
         title: i.title as string,
@@ -47,10 +49,10 @@ if (files.length > 1) {
     });
   };
 
-  const output = Promise.all(files.map(f => imagesFromFile(f).catch(err => {
+  const output = imagesFromFile(files[0]).catch(err => {
     console.error(err);
     return ([] as Image[]);
-  })));
+  });
 
   output.then(all => all.flat().map(a => JSON.stringify(a)).forEach(a => console.log(a)));
 
