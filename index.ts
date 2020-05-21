@@ -1,5 +1,11 @@
+#!/usr/bin/env node
 
-console.log("GIVE ME YOUR MARKDOWN");
+import { Remarkable } from "remarkable";
+import { stringifyTree } from "stringify-tree";
+import * as fs from "fs";
+import { promisify } from "util";
+import { fork } from "child_process";
+import * as path from "path";
 
 const files = process.argv.filter(s => s.endsWith(".md"));
 
@@ -9,58 +15,63 @@ if (files.length === 0) {
   process.exit(1);
 }
 
-console.log("The files are: " + files.join(" "))
+if (files.length > 1) {
+  const stuff = Promise.all(files.map(f =>
+    promisify(fork)("index.js", [path.resolve(f)], {})));
+  console.error("ok!")
+  stuff.then(ok => console.error("yeah"), err => { console.error(err) });
+} else {
 
-import { Remarkable } from "remarkable";
-import { stringifyTree } from "stringify-tree";
-import * as fs from "fs";
-import { promisify } from "util";
-
-const markdownIt = new Remarkable();
-
-type Image = { alt: string, title: string, src: string, markdownFile: string }
+  console.log("The file is: " + files.join(" "))
 
 
-function imagesFromFile(path: string): Promise<Image[]> {
-  const stringContent: Promise<string> = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
+  const markdownIt = new Remarkable();
 
-  return stringContent.then(content => {
-    const p = markdownIt.parse(content, {});
-    // printTree(p);
-    const images = allImageTokens(p);
-    //console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
-    return images.map((i: any) => ({
-      markdownFile: path,
-      src: i.src as string,
-      alt: i.alt as string,
-      title: i.title as string,
-    }));
-  });
-};
+  type Image = { alt: string, title: string, src: string, markdownFile: string }
 
-const output = Promise.all(files.map(f => imagesFromFile(f).catch(err => {
-  console.error(err);
-  return ([] as Image[]);
-})));
 
-output.then(all => all.flat().map(a => JSON.stringify(a)).forEach(a => console.log(a)));
+  function imagesFromFile(path: string): Promise<Image[]> {
+    const stringContent: Promise<string> = promisify(fs.readFile)(files[0], { encoding: "UTF-8" });
 
-type Tree = { type: string, children: Tree[] | null }
-
-// not tail-recursive
-function allImageTokens(input: Tree[]): Tree[] {
-  if (!input || input.length === 0) {
-    return [];
+    return stringContent.then(content => {
+      const p = markdownIt.parse(content, {});
+      // printTree(p);
+      const images = allImageTokens(p);
+      //console.log("Image tokens: " + images.map(i => JSON.stringify(i)).join("\n"))
+      return images.map((i: any) => ({
+        markdownFile: path,
+        src: i.src as string,
+        alt: i.alt as string,
+        title: i.title as string,
+      }));
+    });
   };
-  const images = input.filter(t => t.type === "image");
-  const rest = input.filter(t => t.type !== "image").flatMap(t => t.children || []);
-  return images.concat(allImageTokens(rest));
-}
 
-function printTree(p: any) {
-  const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
-    { children: p, type: "top-level" },
-    t => t.type, t => (t.children || []))
+  const output = Promise.all(files.map(f => imagesFromFile(f).catch(err => {
+    console.error(err);
+    return ([] as Image[]);
+  })));
 
-  console.log(printedTree);
+  output.then(all => all.flat().map(a => JSON.stringify(a)).forEach(a => console.log(a)));
+
+  type Tree = { type: string, children: Tree[] | null }
+
+  // not tail-recursive
+  function allImageTokens(input: Tree[]): Tree[] {
+    if (!input || input.length === 0) {
+      return [];
+    };
+    const images = input.filter(t => t.type === "image");
+    const rest = input.filter(t => t.type !== "image").flatMap(t => t.children || []);
+    return images.concat(allImageTokens(rest));
+  }
+
+  function printTree(p: any) {
+    const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
+      { children: p, type: "top-level" },
+      t => t.type, t => (t.children || []))
+
+    console.log(printedTree);
+  }
+
 }
