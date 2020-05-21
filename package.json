@@ -1,6 +1,6 @@
 {
   "name": "list-images",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "List image links found in Markdown",
   "main": "index.js",
   "scripts": {
