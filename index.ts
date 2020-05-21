@@ -9,28 +9,21 @@ import * as path from "path";
 
 const files = process.argv.filter(s => s.endsWith(".md"));
 
-
 if (files.length === 0) {
   console.log("USAGE: list-images <name of markdown file...>");
   process.exit(1);
 }
 
 if (files.length > 1) {
-  const stuff = Promise.all(files.map(f =>
-    promisify(fork)("index.js", [path.resolve(f)], {})));
-  console.error("ok!");
-  stuff.then(ok => console.error("yeah"), err => { console.error(err) });
+  files.forEach(f => fork("index.js", [path.resolve(f)], {}));
 } else {
 
   const filepath = files[0];
-
-  console.log("The file is: " + filepath);
-
+  //console.log("The file is: " + filepath);
 
   const markdownIt = new Remarkable();
 
   type Image = { alt: string, title: string, src: string, markdownFile: string }
-
 
   function imagesFromFile(path: string): Promise<Image[]> {
     const stringContent: Promise<string> = promisify(fs.readFile)(filepath, { encoding: "UTF-8" });
@@ -67,13 +60,12 @@ if (files.length > 1) {
     const rest = input.filter(t => t.type !== "image").flatMap(t => t.children || []);
     return images.concat(allImageTokens(rest));
   }
+}
 
-  function printTree(p: any) {
-    const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
-      { children: p, type: "top-level" },
-      t => t.type, t => (t.children || []))
+function printTree(p: any) {
+  const printedTree = stringifyTree<{ children: (typeof p) | null, type: string }>(
+    { children: p, type: "top-level" },
+    t => t.type, t => (t.children || []))
 
-    console.log(printedTree);
-  }
-
+  console.log(printedTree);
 }
